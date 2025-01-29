@@ -1,6 +1,6 @@
 // Code Practice: RNGolf
-// Name: 
-// Date:
+// Name: Tyvin Tandy
+// Date: 1/29/25
 
 'use strict'
 
