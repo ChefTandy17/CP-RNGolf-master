@@ -43,10 +43,16 @@ class Play extends Phaser.Scene {
 
         let wallB = this.physics.add.sprite(0, height / 2, 'wall')                              
         wallB.setX(Phaser.Math.Between(0 + wallB.width / 2, width - wallB.width / 2))
-        wallB.body.setImmovable(true)   
+        wallB.body.setImmovable(true)                                                           //assume if this is removed, the wall will move
 
+        this.walls = this.add.group([wallA, wallB])                                             //to pass it as an array, like a group                                                      
 
         // add one-way
+        this.oneWay = this.physics.add.sprite(0, height / 4 * 3, 'oneway')
+        this.oneWay.setX(Phaser.Math.Between(0 + this.oneWay.width / 2, width - this.oneWay.width / 2))     //to establish randomness X coords
+        this.oneWay.body.setImmovable(true)
+        this.oneWay.body.checkCollision.down = false
+
 
         // add pointer input
         this.input.on('pointerdown', (pointer) => {                                             //this is an arrow function //pointerdown is defined by Phaser
@@ -69,8 +75,11 @@ class Play extends Phaser.Scene {
 
 
         // ball/wall collision
+        this.physics.add.collider(this.ball, this.walls)                                        //to ensure that the ball will always collide with every wall
+
 
         // ball/one-way collision
+        this.physics.add.collider(this.ball, this.oneWay)
     }
 
     update() {
