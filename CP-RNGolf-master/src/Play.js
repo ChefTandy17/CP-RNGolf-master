@@ -66,9 +66,8 @@ class Play extends Phaser.Scene {
 
         // add pointer input
         this.input.on('pointerdown', (pointer) => {                                             //this is an arrow function //pointerdown is defined by Phaser
-            //this changed for the challenging doing random stuff to see how the control work
             let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1;
-            let shotDirectionX = pointer.x + this.ball.x - this.ball.y
+            let shotDirectionX = pointer.x - this.ball.x
         
             // Directly use the difference to set the velocity
             //CHALLENGE: Improve shot logic by making pointer’s relative x-position shoot the ball in correct x-direction
@@ -106,7 +105,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        
+
     }
 }
 
