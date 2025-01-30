@@ -8,6 +8,9 @@ class Play extends Phaser.Scene {
         this.SHOT_VELOCITY_X = 200                                          //To treat it as a constant, as what the professor says
         this.SHOT_VELOCITY_Y_MIN = 700                                                    
         this.SHOT_VELOCITY_Y_MAX = 1100
+        //CHALLENGE: useful variable for the ball to reset
+        this.startX = width / 2
+        this.startY = height - height / 10
     }
 
     preload() {
@@ -17,9 +20,11 @@ class Play extends Phaser.Scene {
         this.load.image('ball', 'ball.png')
         this.load.image('wall', 'wall.png')
         this.load.image('oneway', 'one_way_wall.png')
+
     }
 
     create() {
+
         // add background grass
         this.grass = this.add.image(0, 0, 'grass').setOrigin(0)
 
@@ -41,6 +46,11 @@ class Play extends Phaser.Scene {
         wallA.setX(Phaser.Math.Between(0 + wallA.width / 2, width - wallA.width / 2))           //random wall movement
         wallA.body.setImmovable(true)                                                           //collison
 
+        //CHALLENGE: to make wallA bounce
+        //error. moves, but doesn't bounce
+        wallA.setVelocityX(150)
+        wallA.setCollideWorldBounds(true)
+
         let wallB = this.physics.add.sprite(0, height / 2, 'wall')                              
         wallB.setX(Phaser.Math.Between(0 + wallB.width / 2, width - wallB.width / 2))
         wallB.body.setImmovable(true)                                                           //assume if this is removed, the wall will move
@@ -56,13 +66,15 @@ class Play extends Phaser.Scene {
 
         // add pointer input
         this.input.on('pointerdown', (pointer) => {                                             //this is an arrow function //pointerdown is defined by Phaser
-            let shotDirection = pointer.y <= this.ball.y ? 1 : -1                               //variable to see if the y position lower than or higher than the y position of the ball. 1 or -1 if to flip the velocity                                             
-            
+            //this changed for the challenging doing random stuff to see how the control work
+            let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1                               //variable to see if the y position lower than or higher than the y position of the ball. 1 or -1 if to flip the velocity                                             
+            let shotDirectionX = pointer.x <= this.ball.x ? 1 : -1 
+
             this.ball.body.setVelocityX(Phaser.Math.Between(-this.SHOT_VELOCITY_X,
-            this.SHOT_VELOCITY_X))                                                              //built-in Phaser Math
+            this.SHOT_VELOCITY_X) * shotDirectionX)                                                              //built-in Phaser Math
 
             this.ball.body.setVelocityY(Phaser.Math.Between(this.SHOT_VELOCITY_Y_MIN,
-            this.SHOT_VELOCITY_Y_MAX) * shotDirection)                                          //built-in Phaser Math
+            this.SHOT_VELOCITY_Y_MAX) * shotDirectionY)                                          //built-in Phaser Math
 
             //this.SHOT_VELOCITY_Y_MAX * shotDirection
         })
@@ -70,9 +82,11 @@ class Play extends Phaser.Scene {
         // cup/ball collision
         //this.physics.add.collider(this.ball, this.cup)                                        //the ball collide with the cup (just this alone will NOT make it go in the cup)
         this.physics.add.collider(this.ball, this.cup, (ball, cup) => {                         
-            ball.destroy()
+            //CHALLENGE: Make ball reset logic on successful shot
+            ball.setVelocity(0,0)
+            ball.setPosition(this.startX, this.startY)
+            //ball.destroy()                                                                    //disabled for the challenge
         })
-
 
         // ball/wall collision
         this.physics.add.collider(this.ball, this.walls)                                        //to ensure that the ball will always collide with every wall
@@ -83,7 +97,6 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-
     }
 }
 
