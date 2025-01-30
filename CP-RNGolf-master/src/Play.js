@@ -47,9 +47,9 @@ class Play extends Phaser.Scene {
         wallA.body.setImmovable(true)                                                           //collison
 
         //CHALLENGE: to make wallA bounce
-        //error. moves, but doesn't bounce
         wallA.setVelocityX(150)
         wallA.setCollideWorldBounds(true)
+        wallA.setBounce(1.0)
 
         let wallB = this.physics.add.sprite(0, height / 2, 'wall')                              
         wallB.setX(Phaser.Math.Between(0 + wallB.width / 2, width - wallB.width / 2))
@@ -67,14 +67,23 @@ class Play extends Phaser.Scene {
         // add pointer input
         this.input.on('pointerdown', (pointer) => {                                             //this is an arrow function //pointerdown is defined by Phaser
             //this changed for the challenging doing random stuff to see how the control work
-            let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1                               //variable to see if the y position lower than or higher than the y position of the ball. 1 or -1 if to flip the velocity                                             
-            let shotDirectionX = pointer.x <= this.ball.x ? 1 : -1 
+            let shotDirectionY = pointer.y <= this.ball.y ? 1 : -1;
+            let shotDirectionX = pointer.x + this.ball.x - this.ball.y
+        
+            // Directly use the difference to set the velocity
+            //CHALLENGE: Improve shot logic by making pointer’s relative x-position shoot the ball in correct x-direction
+            this.ball.body.setVelocityX(shotDirectionX)
+            this.ball.body.setVelocityY(Phaser.Math.Between(this.SHOT_VELOCITY_Y_MIN, 
+            this.SHOT_VELOCITY_Y_MAX) * shotDirectionY)
 
+            /*
+            
             this.ball.body.setVelocityX(Phaser.Math.Between(-this.SHOT_VELOCITY_X,
             this.SHOT_VELOCITY_X) * shotDirectionX)                                                              //built-in Phaser Math
 
             this.ball.body.setVelocityY(Phaser.Math.Between(this.SHOT_VELOCITY_Y_MIN,
             this.SHOT_VELOCITY_Y_MAX) * shotDirectionY)                                          //built-in Phaser Math
+            */
 
             //this.SHOT_VELOCITY_Y_MAX * shotDirection
         })
@@ -97,6 +106,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+        
     }
 }
 
